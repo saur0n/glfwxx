@@ -2,7 +2,7 @@
 #   Object oriented GLFW wrapper
 #   Build rules
 #   
-#   © 2023, Sauron
+#   © 2023—2024, Sauron
 ################################################################################
 
 NAME=glfwxx

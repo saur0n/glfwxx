@@ -4,9 +4,151 @@
 using namespace glfw;
 using std::vector;
 
+void glfw::getVersion(int &major, int &minor, int &rev) {
+    glfwGetVersion(&major, &minor, &rev);
+}
+
+const char * glfw::getVersionString() {
+    return glfwGetVersionString();
+}
+
+void glfw::defaultWindowHints() {
+    glfwDefaultWindowHints();
+}
+
+void glfw::windowHint(int hint, int value) {
+    glfwWindowHint(hint, value);
+}
+
+void glfw::windowHint(int hint, const char * value) {
+    glfwWindowHintString(hint, value);
+}
+
 void glfw::pollEvents() {
     glfwPollEvents();
 }
+
+void glfw::waitEvents() {
+    glfwWaitEvents();
+}
+
+void glfw::waitEvents(double timeout) {
+    glfwWaitEventsTimeout(timeout);
+}
+
+void glfw::postEmptyEvent() {
+    glfwPostEmptyEvent();
+}
+
+bool glfw::rawMouseMotionSupported() {
+    return glfwRawMouseMotionSupported();
+}
+
+const char * glfw::getKeyName(int key, int scancode) {
+    return glfwGetKeyName(key, scancode);
+}
+
+int glfw::getKeyScancode(int key) {
+    return glfwGetKeyScancode(key);
+}
+
+bool glfw::joystickPresent(int jid) {
+    return glfwJoystickPresent(jid);
+}
+
+const float * glfw::getJoystickAxes(int jid, int &count) {
+    return glfwGetJoystickAxes(jid, &count);
+}
+
+const unsigned char * glfw::getJoystickButtons(int jid, int &count) {
+    return glfwGetJoystickButtons(jid, &count);
+}
+
+const unsigned char * glfw::getJoystickHats(int jid, int &count) {
+    return glfwGetJoystickHats(jid, &count);
+}
+
+const char * glfw::getJoystickName(int jid) {
+    return glfwGetJoystickName(jid);
+}
+
+const char * glfw::getJoystickGUID(int jid) {
+    return glfwGetJoystickGUID(jid);
+}
+
+void glfw::setJoystickUserPointer(int jid, void * pointer) {
+    glfwSetJoystickUserPointer(jid, pointer);
+}
+
+void * glfw::getJoystickUserPointer(int jid) {
+    return glfwGetJoystickUserPointer(jid);
+}
+
+int glfw::joystickIsGamepad(int jid) {
+    return glfwJoystickIsGamepad(jid);
+}
+
+GLFWjoystickfun glfw::setJoystickCallback(GLFWjoystickfun callback) {
+    return glfwSetJoystickCallback(callback);
+}
+
+int glfw::updateGamepadMappings(const char * string) {
+    return glfwUpdateGamepadMappings(string);
+}
+
+const char * glfw::getGamepadName(int jid) {
+    return glfwGetGamepadName(jid);
+}
+
+int glfw::getGamepadState(int jid, GLFWgamepadstate &state) {
+    return glfwGetGamepadState(jid, &state);
+}
+
+double glfw::getTime() {
+    return glfwGetTime();
+}
+
+void glfw::setTime(double time) {
+    glfwSetTime(time);
+}
+
+uint64_t glfw::getTimerValue() {
+    return glfwGetTimerValue();
+}
+
+uint64_t glfw::getTimerFrequency() {
+    return glfwGetTimerFrequency();
+}
+
+GLFWwindow * glfw::glfwGetCurrentContext() {
+    return glfwGetCurrentContext();
+}
+
+void glfw::swapInterval(int interval) {
+    return glfwSwapInterval(interval);
+}
+
+bool glfw::extensionSupported(const char * extension) {
+    return glfwExtensionSupported(extension);
+}
+
+GLFWglproc glfw::glfwGetProcAddress(const char * procname) {
+    return glfwGetProcAddress(procname);
+}
+
+bool glfw::vulkanSupported() {
+    return glfwVulkanSupported();
+}
+
+const char ** glfw::getRequiredInstanceExtensions(uint32_t &count) {
+    return glfwGetRequiredInstanceExtensions(&count);
+}
+
+#if defined(VK_VERSION_1_0)
+GLFWvkproc glfw::getInstanceProcAddress(VkInstance instance, const char * procname) {
+    return glfwGetInstanceProcAddress(instance, procname);
+}
+#endif
 
 /******************************************************************************/
 
@@ -75,17 +217,17 @@ public:
 
     static void windowSizeCallback(GLFWwindow * window, int width, int height) {
         if (Window * w=find(window))
-        w->onSize(width, height);
+            w->onSize(width, height);
     }
 
     static void windowCloseCallback(GLFWwindow * window) {
         if (Window * w=find(window))
-        w->onClose();
+            w->onClose();
     }
 
     static void windowRefreshCallback(GLFWwindow * window) {
         if (Window * w=find(window))
-        w->onRefresh();
+            w->onRefresh();
     }
 
     static void windowFocusCallback(GLFWwindow * window, int focused) {
@@ -148,7 +290,7 @@ public:
             w->onScroll(xoffset, yoffset);
     }
 
-    static void windowDropCallback(GLFWwindow * window, int pathCount, const char* paths[]) {
+    static void windowDropCallback(GLFWwindow * window, int pathCount, const char * paths[]) {
         if (Window * w=find(window))
             w->onDrop(pathCount, paths);
     }
@@ -223,7 +365,7 @@ Window::Window(int width, int height, const char * title, const Window &share) :
     init();
 }
 
-Window::Window(int width, int height, const char* title, const Monitor &monitor,
+Window::Window(int width, int height, const char * title, const Monitor &monitor,
         const Window &share) :
         window(glfwCreateWindow(width, height, title, monitor.monitor, share.window)) {
     init();
@@ -236,7 +378,7 @@ Window::~Window() {
     glfwDestroyWindow(window);
 }
 
-bool Window::getShouldClose() {
+bool Window::shouldClose() {
     return glfwWindowShouldClose(window);
 }
 
@@ -397,7 +539,7 @@ void Window::swapBuffers() {
 }
 
 #if defined(VK_VERSION_1_0)
-VkResult Window::createSurface(VkInstance instance, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface) {
+VkResult Window::createSurface(VkInstance instance, const VkAllocationCallbacks * allocator, VkSurfaceKHR * surface) {
     return glfwCreateWindowSurface(instance, window, allocator, surface);
 }
 #endif

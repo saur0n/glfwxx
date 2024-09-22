@@ -12,72 +12,75 @@ void getVersion(int &major, int &minor, int &rev);
 /** Returns a string describing the compile-time configuration **/
 const char * getVersionString();
 /** Resets all window hints to their default values **/
-
+void defaultWindowHints();
 /** Sets the specified window hint to the desired value **/
-
+void windowHint(int hint, int value);
 /** Sets the specified window hint to the desired value **/
-
+void windowHint(int hint, const char * value);
 /** Processes all pending events **/
 void pollEvents();
 /** Waits until events are queued and processes them **/
-
+void waitEvents();
 /** Waits with timeout until events are queued and processes them **/
-
+void waitEvents(double timeout);
 /** Posts an empty event to the event queue **/
-
+void postEmptyEvent();
 /** Returns whether raw mouse motion is supported **/
-
+bool rawMouseMotionSupported();
 /** Returns the layout-specific name of the specified printable key **/
-
+const char * getKeyName(int key, int scancode);
 /** Returns the platform-specific scancode of the specified key **/
-
+int getKeyScancode(int key);
 /** Returns whether the specified joystick is present **/
-
+bool joystickPresent(int jid);
 /** Returns the values of all axes of the specified joystick **/
-
+const float * getJoystickAxes(int jid, int &count);
 /** Returns the state of all buttons of the specified joystick **/
-
+const unsigned char * getJoystickButtons(int jid, int &count);
 /** Returns the state of all hats of the specified joystick **/
-
+const unsigned char * getJoystickHats(int jid, int &count);
 /** Returns the name of the specified joystick **/
-
+const char * getJoystickName(int jid);
 /** Returns the SDL compatible GUID of the specified joystick **/
-
+const char * getJoystickGUID(int jid);
 /** Sets the user pointer of the specified joystick **/
-
+void setJoystickUserPointer(int jid, void * pointer);
 /** Returns the user pointer of the specified joystick **/
-
+void * getJoystickUserPointer(int jid);
 /** Returns whether the specified joystick has a gamepad mapping **/
-
+int joystickIsGamepad(int jid);
 /** Sets the joystick configuration callback **/
-
+GLFWjoystickfun setJoystickCallback(GLFWjoystickfun callback);
 /** Adds the specified SDL_GameControllerDB gamepad mappings **/
-
+int updateGamepadMappings(const char * string);
 /** Returns the human-readable gamepad name for the specified joystick **/
-
+const char * getGamepadName(int jid);
 /** Retrieves the state of the specified joystick remapped as a gamepad **/
-
+int getGamepadState(int jid, GLFWgamepadstate &state);
 /** Returns the GLFW time **/
-
+double getTime();
 /** Sets the GLFW time **/
-
+void setTime(double time);
 /** Returns the current value of the raw timer **/
-
+uint64_t getTimerValue();
 /** Returns the frequency, in Hz, of the raw timer **/
-
+uint64_t getTimerFrequency();
 /** Returns the window whose context is current on the calling thread **/
-
+GLFWwindow * glfwGetCurrentContext();
 /** Sets the swap interval for the current context **/
-
+void swapInterval(int interval);
 /** Returns whether the specified extension is available **/
-
+bool extensionSupported(const char * extension);
 /** Returns the address of the specified function for the current context **/
-
+GLFWglproc glfwGetProcAddress(const char * procname);
 /** Returns whether the Vulkan loader and an ICD have been found **/
-
+bool vulkanSupported();
 /** Returns the Vulkan instance extensions required by GLFW **/
-
+const char ** getRequiredInstanceExtensions(uint32_t &count);
+#if defined(VK_VERSION_1_0)
 /** Returns the address of the specified Vulkan instance function **/
+GLFWvkproc getInstanceProcAddress(VkInstance instance, const char * procname);
+#endif
 
 /** Encapsulates a pointer to a GLFW cursor **/
 class Cursor {
@@ -151,7 +154,7 @@ public:
     /** Destroys the specified window and its context **/
     virtual ~Window();
     /** Checks the close flag of the specified window **/
-    bool getShouldClose();
+    bool shouldClose();
     /** Sets the close flag of the specified window **/
     void setShouldClose(bool value);
     /** Sets the title of the specified window **/
@@ -232,7 +235,7 @@ public:
     void swapBuffers();
 #if defined(VK_VERSION_1_0)
     /** Creates a Vulkan surface for the specified window **/
-    VkResult createSurface(VkInstance instance, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
+    VkResult createSurface(VkInstance instance, const VkAllocationCallbacks * allocator, VkSurfaceKHR * surface);
 #endif
     
 protected:
@@ -269,7 +272,7 @@ protected:
     /** Scroll callback **/
     virtual void onScroll(double xoffset, double yoffset);
     /** Path drop callback **/
-    virtual void onDrop(int path_count, const char* paths[]);
+    virtual void onDrop(int path_count, const char * paths[]);
     
 private:
     explicit Window(const Window &other)=delete;
